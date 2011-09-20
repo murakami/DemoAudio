@@ -14,10 +14,6 @@
 		560A4A981428AD4300754FD0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 560A4A971428AD4300754FD0 /* main.m */; };
 		560A4A9C1428AD4300754FD0 /* DemoAudioAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 560A4A9B1428AD4300754FD0 /* DemoAudioAppDelegate.m */; };
 		560A4A9F1428AD4300754FD0 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 560A4A9D1428AD4300754FD0 /* MainWindow.xib */; };
-		560A4AA21428AD4300754FD0 /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 560A4AA11428AD4300754FD0 /* FirstViewController.m */; };
-		560A4AA51428AD4300754FD0 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 560A4AA41428AD4300754FD0 /* SecondViewController.m */; };
-		560A4AA81428AD4300754FD0 /* FirstView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 560A4AA61428AD4300754FD0 /* FirstView.xib */; };
-		560A4AAB1428AD4300754FD0 /* SecondView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 560A4AA91428AD4300754FD0 /* SecondView.xib */; };
 		560A4AB31428AD4300754FD0 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 560A4AB21428AD4300754FD0 /* SenTestingKit.framework */; };
 		560A4AB41428AD4300754FD0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 560A4A8B1428AD4300754FD0 /* UIKit.framework */; };
 		560A4AB51428AD4300754FD0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 560A4A8D1428AD4300754FD0 /* Foundation.framework */; };
@@ -25,6 +21,14 @@
 		560A4ABE1428AD4300754FD0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 560A4ABC1428AD4300754FD0 /* InfoPlist.strings */; };
 		560A4AC01428AD4300754FD0 /* DemoAudioTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 560A4ABF1428AD4300754FD0 /* DemoAudioTests.h */; };
 		560A4AC21428AD4300754FD0 /* DemoAudioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 560A4AC11428AD4300754FD0 /* DemoAudioTests.m */; };
+		56D8C9B91428D4EC00DB374F /* SystemSoundServicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D8C9B71428D4EC00DB374F /* SystemSoundServicesViewController.m */; };
+		56D8C9BA1428D4EC00DB374F /* SystemSoundServicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9B81428D4EC00DB374F /* SystemSoundServicesViewController.xib */; };
+		56D8C9BE1428D61B00DB374F /* AVFoundationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D8C9BC1428D61B00DB374F /* AVFoundationViewController.m */; };
+		56D8C9BF1428D61B00DB374F /* AVFoundationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9BD1428D61B00DB374F /* AVFoundationViewController.xib */; };
+		56D8C9C31428D68F00DB374F /* AudioQueueServicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D8C9C11428D68F00DB374F /* AudioQueueServicesViewController.m */; };
+		56D8C9C41428D68F00DB374F /* AudioQueueServicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9C21428D68F00DB374F /* AudioQueueServicesViewController.xib */; };
+		56D8C9C81428D6CA00DB374F /* AudioUnitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D8C9C61428D6CA00DB374F /* AudioUnitViewController.m */; };
+		56D8C9C91428D6CA00DB374F /* AudioUnitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9C71428D6CA00DB374F /* AudioUnitViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,12 +53,6 @@
 		560A4A9A1428AD4300754FD0 /* DemoAudioAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoAudioAppDelegate.h; sourceTree = "<group>"; };
 		560A4A9B1428AD4300754FD0 /* DemoAudioAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoAudioAppDelegate.m; sourceTree = "<group>"; };
 		560A4A9E1428AD4300754FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
-		560A4AA01428AD4300754FD0 /* FirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
-		560A4AA11428AD4300754FD0 /* FirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
-		560A4AA31428AD4300754FD0 /* SecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
-		560A4AA41428AD4300754FD0 /* SecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
-		560A4AA71428AD4300754FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/FirstView.xib; sourceTree = "<group>"; };
-		560A4AAA1428AD4300754FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SecondView.xib; sourceTree = "<group>"; };
 		560A4AB11428AD4300754FD0 /* DemoAudioTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoAudioTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		560A4AB21428AD4300754FD0 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		560A4ABB1428AD4300754FD0 /* DemoAudioTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DemoAudioTests-Info.plist"; sourceTree = "<group>"; };
@@ -62,6 +60,18 @@
 		560A4ABF1428AD4300754FD0 /* DemoAudioTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoAudioTests.h; sourceTree = "<group>"; };
 		560A4AC11428AD4300754FD0 /* DemoAudioTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoAudioTests.m; sourceTree = "<group>"; };
 		56D8C9B41428BB6A00DB374F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		56D8C9B61428D4EC00DB374F /* SystemSoundServicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSoundServicesViewController.h; sourceTree = "<group>"; };
+		56D8C9B71428D4EC00DB374F /* SystemSoundServicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemSoundServicesViewController.m; sourceTree = "<group>"; };
+		56D8C9B81428D4EC00DB374F /* SystemSoundServicesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SystemSoundServicesViewController.xib; sourceTree = "<group>"; };
+		56D8C9BB1428D61B00DB374F /* AVFoundationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationViewController.h; sourceTree = "<group>"; };
+		56D8C9BC1428D61B00DB374F /* AVFoundationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVFoundationViewController.m; sourceTree = "<group>"; };
+		56D8C9BD1428D61B00DB374F /* AVFoundationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AVFoundationViewController.xib; sourceTree = "<group>"; };
+		56D8C9C01428D68F00DB374F /* AudioQueueServicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioQueueServicesViewController.h; sourceTree = "<group>"; };
+		56D8C9C11428D68F00DB374F /* AudioQueueServicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioQueueServicesViewController.m; sourceTree = "<group>"; };
+		56D8C9C21428D68F00DB374F /* AudioQueueServicesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AudioQueueServicesViewController.xib; sourceTree = "<group>"; };
+		56D8C9C51428D6CA00DB374F /* AudioUnitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnitViewController.h; sourceTree = "<group>"; };
+		56D8C9C61428D6CA00DB374F /* AudioUnitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioUnitViewController.m; sourceTree = "<group>"; };
+		56D8C9C71428D6CA00DB374F /* AudioUnitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AudioUnitViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,12 +136,18 @@
 				560A4A9A1428AD4300754FD0 /* DemoAudioAppDelegate.h */,
 				560A4A9B1428AD4300754FD0 /* DemoAudioAppDelegate.m */,
 				560A4A9D1428AD4300754FD0 /* MainWindow.xib */,
-				560A4AA01428AD4300754FD0 /* FirstViewController.h */,
-				560A4AA11428AD4300754FD0 /* FirstViewController.m */,
-				560A4AA31428AD4300754FD0 /* SecondViewController.h */,
-				560A4AA41428AD4300754FD0 /* SecondViewController.m */,
-				560A4AA61428AD4300754FD0 /* FirstView.xib */,
-				560A4AA91428AD4300754FD0 /* SecondView.xib */,
+				56D8C9B61428D4EC00DB374F /* SystemSoundServicesViewController.h */,
+				56D8C9B71428D4EC00DB374F /* SystemSoundServicesViewController.m */,
+				56D8C9B81428D4EC00DB374F /* SystemSoundServicesViewController.xib */,
+				56D8C9BB1428D61B00DB374F /* AVFoundationViewController.h */,
+				56D8C9BC1428D61B00DB374F /* AVFoundationViewController.m */,
+				56D8C9BD1428D61B00DB374F /* AVFoundationViewController.xib */,
+				56D8C9C01428D68F00DB374F /* AudioQueueServicesViewController.h */,
+				56D8C9C11428D68F00DB374F /* AudioQueueServicesViewController.m */,
+				56D8C9C21428D68F00DB374F /* AudioQueueServicesViewController.xib */,
+				56D8C9C51428D6CA00DB374F /* AudioUnitViewController.h */,
+				56D8C9C61428D6CA00DB374F /* AudioUnitViewController.m */,
+				56D8C9C71428D6CA00DB374F /* AudioUnitViewController.xib */,
 				560A4A921428AD4300754FD0 /* Supporting Files */,
 			);
 			path = DemoAudio;
@@ -239,8 +255,10 @@
 			files = (
 				560A4A961428AD4300754FD0 /* InfoPlist.strings in Resources */,
 				560A4A9F1428AD4300754FD0 /* MainWindow.xib in Resources */,
-				560A4AA81428AD4300754FD0 /* FirstView.xib in Resources */,
-				560A4AAB1428AD4300754FD0 /* SecondView.xib in Resources */,
+				56D8C9BA1428D4EC00DB374F /* SystemSoundServicesViewController.xib in Resources */,
+				56D8C9BF1428D61B00DB374F /* AVFoundationViewController.xib in Resources */,
+				56D8C9C41428D68F00DB374F /* AudioQueueServicesViewController.xib in Resources */,
+				56D8C9C91428D6CA00DB374F /* AudioUnitViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,8 +296,10 @@
 			files = (
 				560A4A981428AD4300754FD0 /* main.m in Sources */,
 				560A4A9C1428AD4300754FD0 /* DemoAudioAppDelegate.m in Sources */,
-				560A4AA21428AD4300754FD0 /* FirstViewController.m in Sources */,
-				560A4AA51428AD4300754FD0 /* SecondViewController.m in Sources */,
+				56D8C9B91428D4EC00DB374F /* SystemSoundServicesViewController.m in Sources */,
+				56D8C9BE1428D61B00DB374F /* AVFoundationViewController.m in Sources */,
+				56D8C9C31428D68F00DB374F /* AudioQueueServicesViewController.m in Sources */,
+				56D8C9C81428D6CA00DB374F /* AudioUnitViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,22 +336,6 @@
 				560A4A9E1428AD4300754FD0 /* en */,
 			);
 			name = MainWindow.xib;
-			sourceTree = "<group>";
-		};
-		560A4AA61428AD4300754FD0 /* FirstView.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				560A4AA71428AD4300754FD0 /* en */,
-			);
-			name = FirstView.xib;
-			sourceTree = "<group>";
-		};
-		560A4AA91428AD4300754FD0 /* SecondView.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				560A4AAA1428AD4300754FD0 /* en */,
-			);
-			name = SecondView.xib;
 			sourceTree = "<group>";
 		};
 		560A4ABC1428AD4300754FD0 /* InfoPlist.strings */ = {
