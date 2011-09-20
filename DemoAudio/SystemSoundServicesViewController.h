@@ -7,7 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AudioToolbox/AudioServices.h>
 
-@interface SystemSoundServicesViewController : UIViewController
+@interface SystemSoundServicesViewController : UIViewController {
+    SystemSoundID systemSoundID;
+}
+
+@property (nonatomic, assign) SystemSoundID systemSoundID;
+
+- (IBAction)play:(id)sender;
 
 @end

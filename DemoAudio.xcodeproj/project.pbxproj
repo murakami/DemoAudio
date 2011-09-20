@@ -29,6 +29,7 @@
 		56D8C9C41428D68F00DB374F /* AudioQueueServicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9C21428D68F00DB374F /* AudioQueueServicesViewController.xib */; };
 		56D8C9C81428D6CA00DB374F /* AudioUnitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D8C9C61428D6CA00DB374F /* AudioUnitViewController.m */; };
 		56D8C9C91428D6CA00DB374F /* AudioUnitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9C71428D6CA00DB374F /* AudioUnitViewController.xib */; };
+		56D8C9CF1428DA7C00DB374F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56D8C9CE1428DA7C00DB374F /* AudioToolbox.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 		56D8C9C51428D6CA00DB374F /* AudioUnitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnitViewController.h; sourceTree = "<group>"; };
 		56D8C9C61428D6CA00DB374F /* AudioUnitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioUnitViewController.m; sourceTree = "<group>"; };
 		56D8C9C71428D6CA00DB374F /* AudioUnitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AudioUnitViewController.xib; sourceTree = "<group>"; };
+		56D8C9CE1428DA7C00DB374F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 				560A4A8C1428AD4300754FD0 /* UIKit.framework in Frameworks */,
 				560A4A8E1428AD4300754FD0 /* Foundation.framework in Frameworks */,
 				560A4A901428AD4300754FD0 /* CoreGraphics.framework in Frameworks */,
+				56D8C9CF1428DA7C00DB374F /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +105,7 @@
 		560A4A7C1428AD4200754FD0 = {
 			isa = PBXGroup;
 			children = (
+				56D8C9CE1428DA7C00DB374F /* AudioToolbox.framework */,
 				56D8C9B41428BB6A00DB374F /* README */,
 				560A4A911428AD4300754FD0 /* DemoAudio */,
 				560A4AB91428AD4300754FD0 /* DemoAudioTests */,

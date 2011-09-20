@@ -8,7 +8,17 @@
 
 #import "SystemSoundServicesViewController.h"
 
+static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *clientData)
+{
+    DBGMSG(@"%s", __func__);
+}
+
+@interface SystemSoundServicesViewController ()
+@end
+
 @implementation SystemSoundServicesViewController
+
+@synthesize systemSoundID;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -33,10 +43,20 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    NSString    *path = [[NSBundle mainBundle] pathForResource:@"tap" ofType:@"aif"];
+    NSURL       *fileURL = [NSURL fileURLWithPath:path];
+    AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &systemSoundID);
+    AudioServicesAddSystemSoundCompletion(self.systemSoundID,
+                                          NULL,
+                                          NULL,
+                                          MyAudioServicesSystemSoundCompletionProc,
+                                          NULL);
 }
 
 - (void)viewDidUnload
 {
+    AudioServicesDisposeSystemSoundID(systemSoundID);
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -46,6 +66,12 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+- (IBAction)play:(id)sender
+{
+    DBGMSG(@"%s", __func__);
+    AudioServicesPlaySystemSound(self.systemSoundID);
 }
 
 @end
