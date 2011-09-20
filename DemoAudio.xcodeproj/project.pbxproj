@@ -61,6 +61,7 @@
 		560A4ABD1428AD4300754FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		560A4ABF1428AD4300754FD0 /* DemoAudioTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoAudioTests.h; sourceTree = "<group>"; };
 		560A4AC11428AD4300754FD0 /* DemoAudioTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoAudioTests.m; sourceTree = "<group>"; };
+		56D8C9B41428BB6A00DB374F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +92,7 @@
 		560A4A7C1428AD4200754FD0 = {
 			isa = PBXGroup;
 			children = (
+				56D8C9B41428BB6A00DB374F /* README */,
 				560A4A911428AD4300754FD0 /* DemoAudio */,
 				560A4AB91428AD4300754FD0 /* DemoAudioTests */,
 				560A4A8A1428AD4300754FD0 /* Frameworks */,
@@ -461,6 +463,7 @@
 				560A4AC71428AD4300754FD0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		560A4AC81428AD4300754FD0 /* Build configuration list for PBXNativeTarget "DemoAudioTests" */ = {
 			isa = XCConfigurationList;
@@ -469,6 +472,7 @@
 				560A4ACA1428AD4300754FD0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
