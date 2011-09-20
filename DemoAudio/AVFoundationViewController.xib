@@ -42,7 +42,7 @@
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="IBUILabel" id="1057350224">
+					<object class="IBUILabel" id="263790090">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{106, 20}, {108, 21}}</string>
@@ -109,7 +109,7 @@
 						<reference key="object" ref="191373211"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1057350224"/>
+							<reference ref="263790090"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -126,7 +126,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">4</int>
-						<reference key="object" ref="1057350224"/>
+						<reference key="object" ref="263790090"/>
 						<reference key="parent" ref="191373211"/>
 					</object>
 				</object>

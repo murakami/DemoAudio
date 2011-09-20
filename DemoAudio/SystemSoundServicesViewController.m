@@ -22,6 +22,7 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
+    DBGMSG(@"%s", __func__);
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
@@ -31,6 +32,7 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 
 - (void)didReceiveMemoryWarning
 {
+    DBGMSG(@"%s", __func__);
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     
@@ -41,10 +43,11 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 
 - (void)viewDidLoad
 {
+    DBGMSG(@"%s", __func__);
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    NSString    *path = [[NSBundle mainBundle] pathForResource:@"tap" ofType:@"aif"];
+    NSString    *path = [[NSBundle mainBundle] pathForResource:@"StarTrek-intercom" ofType:@"aif"];
     NSURL       *fileURL = [NSURL fileURLWithPath:path];
     AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &systemSoundID);
     AudioServicesAddSystemSoundCompletion(self.systemSoundID,
@@ -56,6 +59,7 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 
 - (void)viewDidUnload
 {
+    DBGMSG(@"%s", __func__);
     AudioServicesDisposeSystemSoundID(systemSoundID);
     [super viewDidUnload];
     // Release any retained subviews of the main view.
@@ -70,7 +74,7 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 
 - (IBAction)play:(id)sender
 {
-    DBGMSG(@"%s", __func__);
+    DBGMSG(@"%s, %@", __func__, sender);
     AudioServicesPlaySystemSound(self.systemSoundID);
 }
 

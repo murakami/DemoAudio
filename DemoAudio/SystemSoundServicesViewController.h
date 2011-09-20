@@ -10,7 +10,7 @@
 #import <AudioToolbox/AudioServices.h>
 
 @interface SystemSoundServicesViewController : UIViewController {
-    SystemSoundID systemSoundID;
+    /* SystemSoundID systemSoundID; */
 }
 
 @property (nonatomic, assign) SystemSoundID systemSoundID;

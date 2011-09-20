@@ -12,6 +12,7 @@
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
+    DBGMSG(@"%s", __func__);
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
@@ -21,6 +22,7 @@
 
 - (void)didReceiveMemoryWarning
 {
+    DBGMSG(@"%s", __func__);
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     
@@ -31,12 +33,14 @@
 
 - (void)viewDidLoad
 {
+    DBGMSG(@"%s", __func__);
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 }
 
 - (void)viewDidUnload
 {
+    DBGMSG(@"%s", __func__);
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
