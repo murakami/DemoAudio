@@ -8,6 +8,9 @@
 
 #import "AudioQueueServicesViewController.h"
 
+@interface AudioQueueServicesViewController ()
+@end
+
 @implementation AudioQueueServicesViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -18,6 +21,11 @@
         // Custom initialization
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [super dealloc];
 }
 
 - (void)didReceiveMemoryWarning

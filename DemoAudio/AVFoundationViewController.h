@@ -7,7 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
-@interface AVFoundationViewController : UIViewController
+@interface AVFoundationViewController : UIViewController <AVAudioPlayerDelegate, AVAudioRecorderDelegate, AVAudioSessionDelegate>
+
+@property (nonatomic, retain) NSURL             *recordingURL;
+@property (nonatomic, retain) AVAudioRecorder   *recorder;
+@property (nonatomic, retain) AVAudioPlayer     *player;
+
+- (IBAction)record:(id)sender;
+- (IBAction)play:(id)sender;
 
 @end

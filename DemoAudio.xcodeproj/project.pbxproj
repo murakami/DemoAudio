@@ -21,6 +21,7 @@
 		560A4ABE1428AD4300754FD0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 560A4ABC1428AD4300754FD0 /* InfoPlist.strings */; };
 		560A4AC01428AD4300754FD0 /* DemoAudioTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 560A4ABF1428AD4300754FD0 /* DemoAudioTests.h */; };
 		560A4AC21428AD4300754FD0 /* DemoAudioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 560A4AC11428AD4300754FD0 /* DemoAudioTests.m */; };
+		56258626142C625700EB53A6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56258625142C625700EB53A6 /* AVFoundation.framework */; };
 		56D8C9B91428D4EC00DB374F /* SystemSoundServicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D8C9B71428D4EC00DB374F /* SystemSoundServicesViewController.m */; };
 		56D8C9BA1428D4EC00DB374F /* SystemSoundServicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9B81428D4EC00DB374F /* SystemSoundServicesViewController.xib */; };
 		56D8C9BE1428D61B00DB374F /* AVFoundationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D8C9BC1428D61B00DB374F /* AVFoundationViewController.m */; };
@@ -61,6 +62,7 @@
 		560A4ABD1428AD4300754FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		560A4ABF1428AD4300754FD0 /* DemoAudioTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoAudioTests.h; sourceTree = "<group>"; };
 		560A4AC11428AD4300754FD0 /* DemoAudioTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoAudioTests.m; sourceTree = "<group>"; };
+		56258625142C625700EB53A6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		56D8C9B41428BB6A00DB374F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		56D8C9B61428D4EC00DB374F /* SystemSoundServicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSoundServicesViewController.h; sourceTree = "<group>"; };
 		56D8C9B71428D4EC00DB374F /* SystemSoundServicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemSoundServicesViewController.m; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				560A4A8E1428AD4300754FD0 /* Foundation.framework in Frameworks */,
 				560A4A901428AD4300754FD0 /* CoreGraphics.framework in Frameworks */,
 				56D8C9CF1428DA7C00DB374F /* AudioToolbox.framework in Frameworks */,
+				56258626142C625700EB53A6 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +135,7 @@
 				560A4A8F1428AD4300754FD0 /* CoreGraphics.framework */,
 				560A4AB21428AD4300754FD0 /* SenTestingKit.framework */,
 				56D8C9CE1428DA7C00DB374F /* AudioToolbox.framework */,
+				56258625142C625700EB53A6 /* AVFoundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
