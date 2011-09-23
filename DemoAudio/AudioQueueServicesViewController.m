@@ -9,9 +9,19 @@
 #import "AudioQueueServicesViewController.h"
 
 @interface AudioQueueServicesViewController ()
+- (void)readPackets:(AudioQueueBufferRef)inBuffer;
+- (void)writePackets:(AudioQueueBufferRef)inBuffer;
 @end
 
 @implementation AudioQueueServicesViewController
+
+@synthesize buffer = __buffer;
+@synthesize audioQueueObject = __audioQueueObject;
+@synthesize audioFileID = __audioFileID;
+@synthesize numPacketsToRead = __numPacketsToRead;
+@synthesize numPacketsToWrite = __numPacketsToWrite;
+@synthesize startingPacketCount = __startingPacketCount;
+@synthesize maxPacketCount = __maxPacketCount;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -19,12 +29,16 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        self.maxPacketCount = (444100 * 4);
+        self.buffer = malloc(4 * self.maxPacketCount);
     }
     return self;
 }
 
 - (void)dealloc
 {
+    free(self.buffer);
+    self.buffer = NULL;
     [super dealloc];
 }
 
@@ -58,6 +72,38 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+- (void)readPackets:(AudioQueueBufferRef)inBuffer
+{
+    UInt32  numPackets = self.maxPacketCount - self.startingPacketCount;
+    if (self.numPacketsToRead < numPackets) {
+        numPackets = self.numPacketsToRead;
+    }
+    
+    if (0 < numPackets) {
+        memcpy(inBuffer->mAudioData, (self.buffer + (4 * (self.startingPacketCount + numPackets))), (4 * numPackets));
+        inBuffer->mAudioDataByteSize = (4 * numPackets);
+        inBuffer->mPacketDescriptionCount = numPackets;
+        self.startingPacketCount += numPackets;
+    }
+    else {
+        inBuffer->mAudioDataByteSize = 0;
+        inBuffer->mPacketDescriptionCount = 0;
+    }
+}
+
+- (void)writePackets:(AudioQueueBufferRef)inBuffer
+{
+    UInt32  numPackets = inBuffer->mPacketDescriptionCount;
+    if ((self.maxPacketCount - self.startingPacketCount) < numPackets) {
+        numPackets = (self.maxPacketCount - self.startingPacketCount);
+    }
+    
+    if (0 < numPackets) {
+        memcpy((self.buffer + (4 * self.startingPacketCount)), inBuffer->mAudioData, (4 * numPackets));
+        self.startingPacketCount += numPackets;
+    }
 }
 
 @end

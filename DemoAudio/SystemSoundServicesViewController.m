@@ -26,9 +26,9 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 
 @implementation SystemSoundServicesViewController
 
-@synthesize isPlay = _isPlay;
-@synthesize systemSoundID = _systemSoundID;
-@synthesize loopSwitch = _loopSwitch;
+@synthesize isPlay = __isPlay;
+@synthesize systemSoundID = __systemSoundID;
+@synthesize loopSwitch = __loopSwitch;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -69,7 +69,7 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
     
     NSString    *path = [[NSBundle mainBundle] pathForResource:@"StarTrek-intercom" ofType:@"aif"];
     NSURL       *fileURL = [NSURL fileURLWithPath:path];
-    AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &_systemSoundID);
+    AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &__systemSoundID);
     AudioServicesAddSystemSoundCompletion(self.systemSoundID,
                                           NULL,
                                           NULL,
@@ -82,7 +82,7 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 {
     DBGMSG(@"%s", __func__);
     self.isPlay = NO;
-    AudioServicesDisposeSystemSoundID(_systemSoundID);
+    AudioServicesDisposeSystemSoundID(__systemSoundID);
     self.systemSoundID = 0;
     self.loopSwitch = nil;
     [super viewDidUnload];

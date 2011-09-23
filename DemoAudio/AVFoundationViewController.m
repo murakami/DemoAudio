@@ -13,7 +13,7 @@
 
 @implementation AVFoundationViewController
 
-@synthesize recordingURL = _recordingURL;
+@synthesize recordingURL = __recordingURL;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
