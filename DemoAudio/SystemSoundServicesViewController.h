@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioServices.h>
 
-@interface SystemSoundServicesViewController : UIViewController {
-    /* SystemSoundID systemSoundID; */
-}
+@interface SystemSoundServicesViewController : UIViewController
 
-@property (nonatomic, assign) SystemSoundID systemSoundID;
+@property (nonatomic, assign) BOOL              isPlay;
+@property (nonatomic, assign) SystemSoundID     systemSoundID;
+@property (nonatomic, retain) IBOutlet UISwitch *loopSwitch;
 
 - (IBAction)play:(id)sender;
 

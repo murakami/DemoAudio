@@ -11,6 +11,14 @@
 static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *clientData)
 {
     DBGMSG(@"%s", __func__);
+    SystemSoundServicesViewController   *systemSoundServicesViewController
+        = (SystemSoundServicesViewController *)clientData;
+    if (systemSoundServicesViewController.loopSwitch.on) {
+        AudioServicesPlaySystemSound(systemSoundServicesViewController.systemSoundID);
+    }
+    else {
+        systemSoundServicesViewController.isPlay = NO;
+    }
 }
 
 @interface SystemSoundServicesViewController ()
@@ -18,7 +26,9 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 
 @implementation SystemSoundServicesViewController
 
-@synthesize systemSoundID;
+@synthesize isPlay = _isPlay;
+@synthesize systemSoundID = _systemSoundID;
+@synthesize loopSwitch = _loopSwitch;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -26,8 +36,18 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        self.isPlay = NO;
+        self.systemSoundID = 0;
     }
     return self;
+}
+
+- (void)dealloc
+{
+    self.isPlay = NO;
+    self.systemSoundID = 0;
+    self.loopSwitch = nil;
+    [super dealloc];
 }
 
 - (void)didReceiveMemoryWarning
@@ -49,18 +69,22 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
     
     NSString    *path = [[NSBundle mainBundle] pathForResource:@"StarTrek-intercom" ofType:@"aif"];
     NSURL       *fileURL = [NSURL fileURLWithPath:path];
-    AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &systemSoundID);
+    AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &_systemSoundID);
     AudioServicesAddSystemSoundCompletion(self.systemSoundID,
                                           NULL,
                                           NULL,
                                           MyAudioServicesSystemSoundCompletionProc,
-                                          NULL);
+                                          self);
+    [self.loopSwitch setOn:NO animated:NO];
 }
 
 - (void)viewDidUnload
 {
     DBGMSG(@"%s", __func__);
-    AudioServicesDisposeSystemSoundID(systemSoundID);
+    self.isPlay = NO;
+    AudioServicesDisposeSystemSoundID(_systemSoundID);
+    self.systemSoundID = 0;
+    self.loopSwitch = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -75,6 +99,8 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
 - (IBAction)play:(id)sender
 {
     DBGMSG(@"%s, %@", __func__, sender);
+    if (self.isPlay)    return;
+    self.isPlay = YES;
     AudioServicesPlaySystemSound(self.systemSoundID);
 }
 
