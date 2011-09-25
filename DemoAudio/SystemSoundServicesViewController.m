@@ -67,7 +67,7 @@ static void MyAudioServicesSystemSoundCompletionProc(SystemSoundID ssID, void *c
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    NSString    *path = [[NSBundle mainBundle] pathForResource:@"StarTrek-intercom" ofType:@"aif"];
+    NSString    *path = [[NSBundle mainBundle] pathForResource:@"beep" ofType:@"aif"];
     NSURL       *fileURL = [NSURL fileURLWithPath:path];
     AudioServicesCreateSystemSoundID((CFURLRef)fileURL, &__systemSoundID);
     AudioServicesAddSystemSoundCompletion(self.systemSoundID,

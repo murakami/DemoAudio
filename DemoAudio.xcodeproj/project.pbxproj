@@ -31,7 +31,7 @@
 		56D8C9C81428D6CA00DB374F /* AudioUnitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D8C9C61428D6CA00DB374F /* AudioUnitViewController.m */; };
 		56D8C9C91428D6CA00DB374F /* AudioUnitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9C71428D6CA00DB374F /* AudioUnitViewController.xib */; };
 		56D8C9CF1428DA7C00DB374F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56D8C9CE1428DA7C00DB374F /* AudioToolbox.framework */; };
-		56D8C9DA1428EA3B00DB374F /* StarTrek-intercom.aif in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9D91428EA3B00DB374F /* StarTrek-intercom.aif */; };
+		56D8C9DA1428EA3B00DB374F /* beep.aif in Resources */ = {isa = PBXBuildFile; fileRef = 56D8C9D91428EA3B00DB374F /* beep.aif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,7 +77,7 @@
 		56D8C9C61428D6CA00DB374F /* AudioUnitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioUnitViewController.m; sourceTree = "<group>"; };
 		56D8C9C71428D6CA00DB374F /* AudioUnitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AudioUnitViewController.xib; sourceTree = "<group>"; };
 		56D8C9CE1428DA7C00DB374F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		56D8C9D91428EA3B00DB374F /* StarTrek-intercom.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = "StarTrek-intercom.aif"; sourceTree = "<group>"; };
+		56D8C9D91428EA3B00DB374F /* beep.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = beep.aif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,7 +197,7 @@
 		56D8C9D81428EA3A00DB374F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				56D8C9D91428EA3B00DB374F /* StarTrek-intercom.aif */,
+				56D8C9D91428EA3B00DB374F /* beep.aif */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -278,7 +278,7 @@
 				56D8C9BF1428D61B00DB374F /* AVFoundationViewController.xib in Resources */,
 				56D8C9C41428D68F00DB374F /* AudioQueueServicesViewController.xib in Resources */,
 				56D8C9C91428D6CA00DB374F /* AudioUnitViewController.xib in Resources */,
-				56D8C9DA1428EA3B00DB374F /* StarTrek-intercom.aif in Resources */,
+				56D8C9DA1428EA3B00DB374F /* beep.aif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
