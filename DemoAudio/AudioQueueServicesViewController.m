@@ -8,7 +8,19 @@
 
 #import "AudioQueueServicesViewController.h"
 
+static void inputCallback(
+    void                                *inUserData,
+    AudioQueueRef                       inAQ,
+    AudioQueueBufferRef                 inBuffer,
+    const AudioTimeStamp                *inStartTime,
+    UInt32                              inNumberPacketDescriptions,
+    const AudioStreamPacketDescription  *inPacketDescs)
+{
+    
+}
+
 @interface AudioQueueServicesViewController ()
+- (void)prepareAudioQueue;
 - (void)readPackets:(AudioQueueBufferRef)inBuffer;
 - (void)writePackets:(AudioQueueBufferRef)inBuffer;
 @end
@@ -29,6 +41,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        self.startingPacketCount = 0;
         self.maxPacketCount = (444100 * 4);
         self.buffer = malloc(4 * self.maxPacketCount);
     }
@@ -74,16 +87,57 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+- (IBAction)record:(id)sender
+{
+}
+
+- (IBAction)play:(id)sender
+{
+}
+
+- (void)prepareAudioQueue
+{
+    AudioStreamBasicDescription audioFormat;
+    audioFormat.mSampleRate         = 44100.0;
+    audioFormat.mFormatID           = kAudioFormatLinearPCM;
+    audioFormat.mFormatFlags        = kLinearPCMFormatFlagIsSignedInteger
+                                    | kAudioFormatFlagIsBigEndian
+                                    | kLinearPCMFormatFlagIsPacked;
+    audioFormat.mFramesPerPacket    = 1;
+    audioFormat.mChannelsPerFrame   = 1;
+    audioFormat.mBitsPerChannel     = 16;
+    audioFormat.mBytesPerPacket     = 2;
+    audioFormat.mBytesPerFrame      = 2;
+    audioFormat.mReserved           = 0;
+    
+    AudioQueueNewInput(&audioFormat, inputCallback, self, NULL, NULL, 0, &__audioQueueObject);
+    
+    self.startingPacketCount = 0;
+    AudioQueueBufferRef buffers[3];
+    
+    self.numPacketsToWrite = 1024;
+    UInt32  bufferByteSize = self.numPacketsToWrite * audioFormat.mBytesPerPacket;
+    
+    int bufferIndex;
+    for (bufferIndex = 0; bufferIndex < 3; bufferIndex++) {
+        AudioQueueAllocateBuffer(self.audioQueueObject, bufferByteSize, &buffers[bufferIndex]);
+        AudioQueueEnqueueBuffer(self.audioQueueObject, buffers[bufferIndex], 0, NULL);
+    }
+}
+
 - (void)readPackets:(AudioQueueBufferRef)inBuffer
 {
+    UInt32  bytesPerPacket = 2;
     UInt32  numPackets = self.maxPacketCount - self.startingPacketCount;
     if (self.numPacketsToRead < numPackets) {
         numPackets = self.numPacketsToRead;
     }
     
     if (0 < numPackets) {
-        memcpy(inBuffer->mAudioData, (self.buffer + (4 * (self.startingPacketCount + numPackets))), (4 * numPackets));
-        inBuffer->mAudioDataByteSize = (4 * numPackets);
+        memcpy(inBuffer->mAudioData,
+               (self.buffer + (bytesPerPacket * self.startingPacketCount)),
+               (bytesPerPacket * numPackets));
+        inBuffer->mAudioDataByteSize = (bytesPerPacket * numPackets);
         inBuffer->mPacketDescriptionCount = numPackets;
         self.startingPacketCount += numPackets;
     }
@@ -95,13 +149,16 @@
 
 - (void)writePackets:(AudioQueueBufferRef)inBuffer
 {
+    UInt32  bytesPerPacket = 2;
     UInt32  numPackets = inBuffer->mPacketDescriptionCount;
     if ((self.maxPacketCount - self.startingPacketCount) < numPackets) {
         numPackets = (self.maxPacketCount - self.startingPacketCount);
     }
     
     if (0 < numPackets) {
-        memcpy((self.buffer + (4 * self.startingPacketCount)), inBuffer->mAudioData, (4 * numPackets));
+        memcpy((self.buffer + (bytesPerPacket * self.startingPacketCount)),
+               inBuffer->mAudioData,
+               (bytesPerPacket * numPackets));
         self.startingPacketCount += numPackets;
     }
 }
