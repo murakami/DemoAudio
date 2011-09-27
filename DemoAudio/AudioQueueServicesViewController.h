@@ -21,5 +21,6 @@
 
 - (IBAction)record:(id)sender;
 - (IBAction)play:(id)sender;
+- (IBAction)stop:(id)sender;
 
 @end

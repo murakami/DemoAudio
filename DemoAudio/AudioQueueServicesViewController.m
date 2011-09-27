@@ -8,19 +8,22 @@
 
 #import "AudioQueueServicesViewController.h"
 
-static void inputCallback(
+static void MyAudioQueueInputCallback(
     void                                *inUserData,
     AudioQueueRef                       inAQ,
     AudioQueueBufferRef                 inBuffer,
     const AudioTimeStamp                *inStartTime,
     UInt32                              inNumberPacketDescriptions,
-    const AudioStreamPacketDescription  *inPacketDescs)
-{
-    
-}
+    const AudioStreamPacketDescription  *inPacketDescs);
+static void MyAudioQueueOutputCallback(
+    void                 *inUserData,
+    AudioQueueRef        inAQ,
+    AudioQueueBufferRef  inBuffer);
 
 @interface AudioQueueServicesViewController ()
-- (void)prepareAudioQueue;
+- (void)prepareBuffer;
+- (void)prepareAudioQueueForRecord;
+- (void)prepareAudioQueueForPlay;
 - (void)readPackets:(AudioQueueBufferRef)inBuffer;
 - (void)writePackets:(AudioQueueBufferRef)inBuffer;
 @end
@@ -41,9 +44,6 @@ static void inputCallback(
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        self.startingPacketCount = 0;
-        self.maxPacketCount = (444100 * 4);
-        self.buffer = malloc(4 * self.maxPacketCount);
     }
     return self;
 }
@@ -71,6 +71,9 @@ static void inputCallback(
     DBGMSG(@"%s", __func__);
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    [self prepareBuffer];
+    self.audioQueueObject = NULL;
 }
 
 - (void)viewDidUnload
@@ -89,14 +92,51 @@ static void inputCallback(
 
 - (IBAction)record:(id)sender
 {
+    DBGMSG(@"%s", __func__);
+    if (self.audioQueueObject)
+        return;
+    [self prepareAudioQueueForRecord];
+    OSStatus    err = AudioQueueStart(self.audioQueueObject, NULL);
+    if (err) {
+        DBGMSG(@"AudioQueueStart = %d", (int)err);
+    }
 }
 
 - (IBAction)play:(id)sender
 {
+    DBGMSG(@"%s", __func__);
+    if (self.audioQueueObject)
+        return;
+    [self prepareAudioQueueForPlay];
+    OSStatus    err = AudioQueueStart(self.audioQueueObject, NULL);
+    if (err) {
+        DBGMSG(@"AudioQueueStart = %d", (int)err);
+    }
 }
 
-- (void)prepareAudioQueue
+- (IBAction)stop:(id)sender
 {
+    DBGMSG(@"%s", __func__);
+    AudioQueueStop(self.audioQueueObject, YES);
+    AudioQueueDispose(self.audioQueueObject, YES);
+    self.audioQueueObject = NULL;
+}
+
+- (void)prepareBuffer
+{
+    DBGMSG(@"%s", __func__);
+    
+    UInt32  bytesPerPacket = 2;
+    UInt32  sec = 4;
+    self.startingPacketCount = 0;
+    self.maxPacketCount = (444100 * sec);
+    self.buffer = malloc(self.maxPacketCount * bytesPerPacket);
+}
+
+- (void)prepareAudioQueueForRecord
+{
+    DBGMSG(@"%s", __func__);
+    
     AudioStreamBasicDescription audioFormat;
     audioFormat.mSampleRate         = 44100.0;
     audioFormat.mFormatID           = kAudioFormatLinearPCM;
@@ -110,7 +150,7 @@ static void inputCallback(
     audioFormat.mBytesPerFrame      = 2;
     audioFormat.mReserved           = 0;
     
-    AudioQueueNewInput(&audioFormat, inputCallback, self, NULL, NULL, 0, &__audioQueueObject);
+    AudioQueueNewInput(&audioFormat, MyAudioQueueInputCallback, self, NULL, NULL, 0, &__audioQueueObject);
     
     self.startingPacketCount = 0;
     AudioQueueBufferRef buffers[3];
@@ -125,8 +165,41 @@ static void inputCallback(
     }
 }
 
+- (void)prepareAudioQueueForPlay
+{
+    DBGMSG(@"%s", __func__);
+
+    AudioStreamBasicDescription audioFormat;
+    audioFormat.mSampleRate         = 44100.0;
+    audioFormat.mFormatID           = kAudioFormatLinearPCM;
+    audioFormat.mFormatFlags        = kLinearPCMFormatFlagIsSignedInteger
+                                    | kAudioFormatFlagIsBigEndian
+                                    | kLinearPCMFormatFlagIsPacked;
+    audioFormat.mFramesPerPacket    = 1;
+    audioFormat.mChannelsPerFrame   = 1;
+    audioFormat.mBitsPerChannel     = 16;
+    audioFormat.mBytesPerPacket     = 2;
+    audioFormat.mBytesPerFrame      = 2;
+    audioFormat.mReserved           = 0;
+    
+    AudioQueueNewOutput(&audioFormat, MyAudioQueueOutputCallback, self, NULL, NULL, 0, &__audioQueueObject);
+    
+    self.startingPacketCount = 0;
+    AudioQueueBufferRef buffers[3];
+    
+    self.numPacketsToRead = 1024;
+    UInt32  bufferByteSize = self.numPacketsToRead * audioFormat.mBytesPerPacket;
+    
+    int bufferIndex;
+    for (bufferIndex = 0; bufferIndex < 3; bufferIndex++) {
+        AudioQueueAllocateBuffer(self.audioQueueObject, bufferByteSize, &buffers[bufferIndex]);
+        MyAudioQueueOutputCallback(self, self.audioQueueObject, buffers[bufferIndex]);
+    }
+}
+
 - (void)readPackets:(AudioQueueBufferRef)inBuffer
 {
+    DBGMSG(@"%s", __func__);
     UInt32  bytesPerPacket = 2;
     UInt32  numPackets = self.maxPacketCount - self.startingPacketCount;
     if (self.numPacketsToRead < numPackets) {
@@ -149,8 +222,9 @@ static void inputCallback(
 
 - (void)writePackets:(AudioQueueBufferRef)inBuffer
 {
+    DBGMSG(@"%s", __func__);
     UInt32  bytesPerPacket = 2;
-    UInt32  numPackets = inBuffer->mPacketDescriptionCount;
+    UInt32  numPackets = (inBuffer->mAudioDataByteSize / bytesPerPacket);    
     if ((self.maxPacketCount - self.startingPacketCount) < numPackets) {
         numPackets = (self.maxPacketCount - self.startingPacketCount);
     }
@@ -164,3 +238,36 @@ static void inputCallback(
 }
 
 @end
+
+static void MyAudioQueueInputCallback(
+    void                                *inUserData,
+    AudioQueueRef                       inAQ,
+    AudioQueueBufferRef                 inBuffer,
+    const AudioTimeStamp                *inStartTime,
+    UInt32                              inNumberPacketDescriptions,
+    const AudioStreamPacketDescription  *inPacketDescs)
+{
+    DBGMSG(@"%s", __func__);
+    AudioQueueServicesViewController    *viewController = (AudioQueueServicesViewController *)inUserData;
+    [viewController writePackets:inBuffer];
+    AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+    if (viewController.maxPacketCount <= viewController.startingPacketCount) {
+        [viewController stop:nil];
+    }
+}
+
+static void MyAudioQueueOutputCallback(
+    void                 *inUserData,
+    AudioQueueRef        inAQ,
+    AudioQueueBufferRef  inBuffer)
+{
+    DBGMSG(@"%s", __func__);
+    AudioQueueServicesViewController    *viewController = (AudioQueueServicesViewController *)inUserData;
+    [viewController readPackets:inBuffer];
+    AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+    if (viewController.maxPacketCount <= viewController.startingPacketCount) {
+        viewController.startingPacketCount = 0;
+    }
+}
+
+/* End Of File */
