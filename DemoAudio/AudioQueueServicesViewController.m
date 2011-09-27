@@ -222,7 +222,10 @@ static void MyAudioQueueOutputCallback(
 
 - (void)writePackets:(AudioQueueBufferRef)inBuffer
 {
-    DBGMSG(@"%s", __func__);
+    DBGMSG(@"%s, mAudioDataByteSize(%u), numPackets(%u)",
+           __func__,
+           (unsigned int)inBuffer->mAudioDataByteSize,
+           (unsigned int)(inBuffer->mAudioDataByteSize / 2));
     UInt32  bytesPerPacket = 2;
     UInt32  numPackets = (inBuffer->mAudioDataByteSize / bytesPerPacket);    
     if ((self.maxPacketCount - self.startingPacketCount) < numPackets) {
@@ -251,6 +254,10 @@ static void MyAudioQueueInputCallback(
     AudioQueueServicesViewController    *viewController = (AudioQueueServicesViewController *)inUserData;
     [viewController writePackets:inBuffer];
     AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+    
+    DBGMSG(@"startingPacketCount(%u), maxPacketCount(%u)",
+           (unsigned int)viewController.startingPacketCount,
+           (unsigned int)viewController.maxPacketCount);
     if (viewController.maxPacketCount <= viewController.startingPacketCount) {
         [viewController stop:nil];
     }
@@ -265,6 +272,10 @@ static void MyAudioQueueOutputCallback(
     AudioQueueServicesViewController    *viewController = (AudioQueueServicesViewController *)inUserData;
     [viewController readPackets:inBuffer];
     AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+    
+    DBGMSG(@"startingPacketCount(%u), maxPacketCount(%u)",
+           (unsigned int)viewController.startingPacketCount,
+           (unsigned int)viewController.maxPacketCount);
     if (viewController.maxPacketCount <= viewController.startingPacketCount) {
         viewController.startingPacketCount = 0;
     }
