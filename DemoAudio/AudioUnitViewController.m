@@ -9,9 +9,13 @@
 #import "AudioUnitViewController.h"
 
 @interface AudioUnitViewController ()
+- (void)prepareAUGraph;
 @end
 
 @implementation AudioUnitViewController
+
+@synthesize auGraph = __auGraph;
+@synthesize audioUnitOutputFormat = __audioUnitOutputFormat;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -58,6 +62,26 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+- (IBAction)record:(id)sender
+{
+    DBGMSG(@"%s", __func__);
+}
+
+- (IBAction)play:(id)sender
+{
+    DBGMSG(@"%s", __func__);
+}
+
+- (IBAction)stop:(id)sender
+{
+    DBGMSG(@"%s", __func__);
+}
+
+- (void)prepareAUGraph
+{
+    DBGMSG(@"%s", __func__);
 }
 
 @end

@@ -7,7 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AudioToolbox/AudioToolbox.h>
+#import <AudioUnit/AudioUnit.h>
 
 @interface AudioUnitViewController : UIViewController
+
+@property (nonatomic, assign) AUGraph                       auGraph;
+@property (nonatomic, assign) AudioStreamBasicDescription   audioUnitOutputFormat;
+
+- (IBAction)record:(id)sender;
+- (IBAction)play:(id)sender;
+- (IBAction)stop:(id)sender;
 
 @end
