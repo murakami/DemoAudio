@@ -13,6 +13,9 @@
 
 @implementation AVFoundationViewController
 
+@synthesize recordButton = __recordButton;
+@synthesize playButton = __playButton;
+@synthesize msgLabel = __msgLabel;
 @synthesize recordingURL = __recordingURL;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -27,6 +30,9 @@
 
 - (void)dealloc
 {
+    self.recordButton = nil;
+    self.playButton = nil;
+    self.msgLabel = nil;
     self.recordingURL = nil;
     [super dealloc];
 }
@@ -58,6 +64,9 @@
 {
     DBGMSG(@"%s", __func__);
     
+    self.recordButton = nil;
+    self.playButton = nil;
+    self.msgLabel = nil;
     self.recordingURL = nil;
     
     [super viewDidUnload];
@@ -81,6 +90,10 @@
     recorder.delegate = self;
 
     [recorder recordForDuration:4.0];
+    
+    self.recordButton.enabled = NO;
+    self.playButton.enabled = NO;
+    self.msgLabel.text = @"record";
 }
 
 - (IBAction)play:(id)sender
@@ -92,7 +105,11 @@
     }
     player.delegate = self;
     DBGMSG(@"player.duration = %f", player.duration);
-   [player play];
+    [player play];
+    
+    self.recordButton.enabled = NO;
+    self.playButton.enabled = NO;
+    self.msgLabel.text = @"play";
 }
 
 - (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag
@@ -100,6 +117,10 @@
     DBGMSG(@"%s", __func__);
     recorder.delegate = nil;
     [recorder release];
+    
+    self.recordButton.enabled = YES;
+    self.playButton.enabled = YES;
+    self.msgLabel.text = @"idle";
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
@@ -107,6 +128,10 @@
     DBGMSG(@"%s", __func__);
     player.delegate = nil;
     [player release];
+    
+    self.recordButton.enabled = YES;
+    self.playButton.enabled = YES;
+    self.msgLabel.text = @"idle";
 }
 
 @end

@@ -129,7 +129,7 @@ static void MyAudioQueueOutputCallback(
     UInt32  bytesPerPacket = 2;
     UInt32  sec = 4;
     self.startingPacketCount = 0;
-    self.maxPacketCount = (444100 * sec);
+    self.maxPacketCount = (44100 * sec);
     self.buffer = malloc(self.maxPacketCount * bytesPerPacket);
 }
 
@@ -141,7 +141,6 @@ static void MyAudioQueueOutputCallback(
     audioFormat.mSampleRate         = 44100.0;
     audioFormat.mFormatID           = kAudioFormatLinearPCM;
     audioFormat.mFormatFlags        = kLinearPCMFormatFlagIsSignedInteger
-                                    | kAudioFormatFlagIsBigEndian
                                     | kLinearPCMFormatFlagIsPacked;
     audioFormat.mFramesPerPacket    = 1;
     audioFormat.mChannelsPerFrame   = 1;
@@ -173,7 +172,6 @@ static void MyAudioQueueOutputCallback(
     audioFormat.mSampleRate         = 44100.0;
     audioFormat.mFormatID           = kAudioFormatLinearPCM;
     audioFormat.mFormatFlags        = kLinearPCMFormatFlagIsSignedInteger
-                                    | kAudioFormatFlagIsBigEndian
                                     | kLinearPCMFormatFlagIsPacked;
     audioFormat.mFramesPerPacket    = 1;
     audioFormat.mChannelsPerFrame   = 1;

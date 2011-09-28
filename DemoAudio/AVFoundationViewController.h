@@ -11,6 +11,9 @@
 
 @interface AVFoundationViewController : UIViewController <AVAudioPlayerDelegate, AVAudioRecorderDelegate, AVAudioSessionDelegate>
 
+@property (nonatomic, retain) IBOutlet UIButton *recordButton;
+@property (nonatomic, retain) IBOutlet UIButton *playButton;
+@property (nonatomic, retain) IBOutlet UILabel  *msgLabel;
 @property (nonatomic, retain) NSURL             *recordingURL;
 
 - (IBAction)record:(id)sender;
