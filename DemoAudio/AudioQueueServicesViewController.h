@@ -13,7 +13,6 @@
 
 @property (nonatomic, assign) void          *buffer;
 @property (nonatomic, assign) AudioQueueRef audioQueueObject;
-@property (nonatomic, assign) AudioFileID   audioFileID;
 @property (nonatomic, assign) UInt32        numPacketsToRead;
 @property (nonatomic, assign) UInt32        numPacketsToWrite;
 @property (nonatomic, assign) SInt64        startingPacketCount;

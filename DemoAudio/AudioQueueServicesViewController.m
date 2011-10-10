@@ -32,7 +32,6 @@ static void MyAudioQueueOutputCallback(
 
 @synthesize buffer = __buffer;
 @synthesize audioQueueObject = __audioQueueObject;
-@synthesize audioFileID = __audioFileID;
 @synthesize numPacketsToRead = __numPacketsToRead;
 @synthesize numPacketsToWrite = __numPacketsToWrite;
 @synthesize startingPacketCount = __startingPacketCount;
