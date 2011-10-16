@@ -30,6 +30,7 @@ static void MyAudioQueueOutputCallback(
 
 @implementation AudioQueueServicesViewController
 
+@synthesize volumeSlider = __volumeSlider;
 @synthesize buffer = __buffer;
 @synthesize audioQueueObject = __audioQueueObject;
 @synthesize numPacketsToRead = __numPacketsToRead;
@@ -50,6 +51,7 @@ static void MyAudioQueueOutputCallback(
 - (void)dealloc
 {
     free(self.buffer);
+    self.volumeSlider = nil;
     self.buffer = NULL;
     [super dealloc];
 }
@@ -78,6 +80,7 @@ static void MyAudioQueueOutputCallback(
 - (void)viewDidUnload
 {
     DBGMSG(@"%s", __func__);
+    self.volumeSlider = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -119,6 +122,14 @@ static void MyAudioQueueOutputCallback(
     AudioQueueStop(self.audioQueueObject, YES);
     AudioQueueDispose(self.audioQueueObject, YES);
     self.audioQueueObject = NULL;
+}
+
+- (IBAction)volume:(id)sender
+{
+    if (self.audioQueueObject) {
+        AudioQueueParameterValue    volume = self.volumeSlider.value;
+        AudioQueueSetParameter(self.audioQueueObject, kAudioQueueParam_Volume, volume);
+    }
 }
 
 - (void)prepareBuffer
@@ -192,6 +203,9 @@ static void MyAudioQueueOutputCallback(
         AudioQueueAllocateBuffer(self.audioQueueObject, bufferByteSize, &buffers[bufferIndex]);
         MyAudioQueueOutputCallback(self, self.audioQueueObject, buffers[bufferIndex]);
     }
+    
+    AudioQueueParameterValue    volume = self.volumeSlider.value;
+    AudioQueueSetParameter(self.audioQueueObject, kAudioQueueParam_Volume, volume);
 }
 
 - (void)readPackets:(AudioQueueBufferRef)inBuffer

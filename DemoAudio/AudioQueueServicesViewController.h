@@ -11,15 +11,17 @@
 
 @interface AudioQueueServicesViewController : UIViewController
 
-@property (nonatomic, assign) void          *buffer;
-@property (nonatomic, assign) AudioQueueRef audioQueueObject;
-@property (nonatomic, assign) UInt32        numPacketsToRead;
-@property (nonatomic, assign) UInt32        numPacketsToWrite;
-@property (nonatomic, assign) SInt64        startingPacketCount;
-@property (nonatomic, assign) SInt64        maxPacketCount;
+@property (nonatomic, retain) IBOutlet UISlider *volumeSlider;
+@property (nonatomic, assign) void              *buffer;
+@property (nonatomic, assign) AudioQueueRef     audioQueueObject;
+@property (nonatomic, assign) UInt32            numPacketsToRead;
+@property (nonatomic, assign) UInt32            numPacketsToWrite;
+@property (nonatomic, assign) SInt64            startingPacketCount;
+@property (nonatomic, assign) SInt64            maxPacketCount;
 
 - (IBAction)record:(id)sender;
 - (IBAction)play:(id)sender;
 - (IBAction)stop:(id)sender;
+- (IBAction)volume:(id)sender;
 
 @end
