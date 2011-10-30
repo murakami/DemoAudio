@@ -1,5 +1,24 @@
 DemoAudio
 by Yukio MURAKAMI - http://www.bitz.co.jp/
 
-Web:     http://www.bitz.co.jp/
-Twitter: m_yukio
+
+About DemoAudio
+===============
+
+This application of the Study Group magazine Cocoa "Cocoa Life 2011" for sample code.
+
+This application meets the following four features samples.
+
+1. System Sound Services
+
+2. AVFoundation
+
+3. Audio Queue Services
+
+4. AUdio Unit
+    Under construction.
+
+
+Web:      http://www.bitz.co.jp/
+Twitter:  @m_yukio
+Facebook: http://www.facebook.com/yukio.murakami
