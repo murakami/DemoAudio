@@ -247,7 +247,7 @@
 		560A4A7E1428AD4200754FD0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "ビッツ有限会社";
 			};
 			buildConfigurationList = 560A4A811428AD4200754FD0 /* Build configuration list for PBXProject "DemoAudio" */;

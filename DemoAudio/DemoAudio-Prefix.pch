@@ -15,7 +15,6 @@
 
 #ifdef	DEBUG
 #define	DBGMSG(...)	NSLog(__VA_ARGS__)
-#define	ADMOB_TESTDRIVE
 #else	/* DEBUG */
 #define	DBGMSG(...)
 #endif	/* DEBUG */
