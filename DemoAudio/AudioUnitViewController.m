@@ -10,14 +10,20 @@
 
 static AudioStreamBasicDescription AUCanonicalASBD(Float64 sampleRate, UInt32 channel);
 static AudioStreamBasicDescription CanonicalASBD(Float64 sampleRate, UInt32 channel);
+static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags,
+                                  const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber,
+                                  UInt32 inNumberFrames, AudioBufferList *ioData);
 
 @interface AudioUnitViewController ()
 - (void)prepareAUGraph;
+- (AudioStreamBasicDescription)auCanonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel;
+- (AudioStreamBasicDescription)canonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel;
 @end
 
 @implementation AudioUnitViewController
 
 @synthesize auGraph = __auGraph;
+@synthesize isRecording = __isRecording;
 @synthesize audioUnitOutputFormat = __audioUnitOutputFormat;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -51,13 +57,20 @@ static AudioStreamBasicDescription CanonicalASBD(Float64 sampleRate, UInt32 chan
     DBGMSG(@"%s", __func__);
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    
+
+    self.isRecording = NO;
     [self prepareAUGraph];
 }
 
 - (void)viewDidUnload
 {
     DBGMSG(@"%s", __func__);
+    
+    if (self.isRecording)   [self stop:nil];
+    AUGraphUninitialize(self.auGraph);
+    AUGraphClose(self.auGraph);
+    DisposeAUGraph(self.auGraph);
+    
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -72,6 +85,11 @@ static AudioStreamBasicDescription CanonicalASBD(Float64 sampleRate, UInt32 chan
 - (IBAction)record:(id)sender
 {
     DBGMSG(@"%s", __func__);
+    if (self.isRecording)   return;
+    
+    AUGraphStart(self.auGraph);
+    AUGraphAddRenderNotify(self.auGraph, MyAURenderCallack, NULL);
+    self.isRecording = YES;
 }
 
 - (IBAction)play:(id)sender
@@ -82,6 +100,11 @@ static AudioStreamBasicDescription CanonicalASBD(Float64 sampleRate, UInt32 chan
 - (IBAction)stop:(id)sender
 {
     DBGMSG(@"%s", __func__);
+    if (! self.isRecording)   return;
+
+    AUGraphRemoveRenderNotify(self.auGraph, MyAURenderCallack, NULL);
+    AUGraphStop(self.auGraph);
+    self.isRecording = NO;
 }
 
 - (void)prepareAUGraph
@@ -106,12 +129,22 @@ static AudioStreamBasicDescription CanonicalASBD(Float64 sampleRate, UInt32 chan
     UInt32  flag = 1;
     AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, 1, &flag, sizeof(flag));
     
-    AudioStreamBasicDescription audioFormat = CanonicalASBD(44100.0, 1);
+    AudioStreamBasicDescription audioFormat = [self canonicalASBDSampleRate:44100.0 channel:1];
     AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &audioFormat, sizeof(AudioStreamBasicDescription));
     AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &audioFormat, sizeof(AudioStreamBasicDescription));
     
-    AUGraphConnectNodeInput(self.auGraph, remoteIONode, 1, remoteIONode, 0);
+    //AUGraphConnectNodeInput(self.auGraph, remoteIONode, 1, remoteIONode, 0);
     AUGraphInitialize(self.auGraph);
+}
+
+- (AudioStreamBasicDescription)auCanonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel
+{
+    return AUCanonicalASBD(sampleRate, channel);
+}
+
+- (AudioStreamBasicDescription)canonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel
+{
+    return CanonicalASBD(sampleRate, channel);
 }
 
 @end
@@ -144,6 +177,17 @@ static AudioStreamBasicDescription CanonicalASBD(Float64 sampleRate, UInt32 chan
     audioFormat.mBitsPerChannel     = 8 * sizeof(AudioSampleType);
     audioFormat.mReserved           = 0;
     return audioFormat;
+}
+
+static OSStatus MyAURenderCallack(void *inRefCon,
+                                  AudioUnitRenderActionFlags *ioActionFlags,
+                                  const AudioTimeStamp *inTimeStamp,
+                                  UInt32 inBusNumber,
+                                  UInt32 inNumberFrames,
+                                  AudioBufferList *ioData)
+{
+    DBGMSG(@"%s, inNumberFrames:%u", __func__, (unsigned int)inNumberFrames);
+    return noErr;
 }
 
 /* End Of File */
