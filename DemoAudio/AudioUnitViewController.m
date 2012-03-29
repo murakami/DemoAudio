@@ -187,6 +187,10 @@ static OSStatus MyAURenderCallack(void *inRefCon,
                                   AudioBufferList *ioData)
 {
     DBGMSG(@"%s, inNumberFrames:%u", __func__, (unsigned int)inNumberFrames);
+    DBGMSG(@"ioData: mNumberBuffers(%u)", (unsigned int)ioData->mNumberBuffers);
+    DBGMSG(@"ioData->mBuffers: mNumberChannels(%u), mDataByteSize(%u)",
+           (unsigned int)ioData->mBuffers->mNumberChannels,
+           (unsigned int)ioData->mBuffers->mDataByteSize);
     return noErr;
 }
 
