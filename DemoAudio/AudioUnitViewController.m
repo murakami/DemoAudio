@@ -188,9 +188,12 @@ static OSStatus MyAURenderCallack(void *inRefCon,
 {
     DBGMSG(@"%s, inNumberFrames:%u", __func__, (unsigned int)inNumberFrames);
     DBGMSG(@"ioData: mNumberBuffers(%u)", (unsigned int)ioData->mNumberBuffers);
-    DBGMSG(@"ioData->mBuffers: mNumberChannels(%u), mDataByteSize(%u)",
-           (unsigned int)ioData->mBuffers->mNumberChannels,
-           (unsigned int)ioData->mBuffers->mDataByteSize);
+    for (unsigned int i = 0; i < ioData->mNumberBuffers; i++) {
+        DBGMSG(@"ioData->mBuffers[%u]: mNumberChannels(%u), mDataByteSize(%u)",
+               i,
+               (unsigned int)ioData->mBuffers[i].mNumberChannels,
+               (unsigned int)ioData->mBuffers[i].mDataByteSize);
+    }
     return noErr;
 }
 
