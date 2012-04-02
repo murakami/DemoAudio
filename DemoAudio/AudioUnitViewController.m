@@ -22,7 +22,7 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
 
 @implementation AudioUnitViewController
 
-@synthesize auGraph = __auGraph;
+@synthesize recAUGraph = __recAUGraph;
 @synthesize isRecording = __isRecording;
 @synthesize audioUnitOutputFormat = __audioUnitOutputFormat;
 
@@ -57,6 +57,18 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     DBGMSG(@"%s", __func__);
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    AudioSessionInitialize(NULL, NULL, NULL, NULL);
+    UInt32 nChannels = 0;
+    UInt32 size = sizeof(nChannels);
+    AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareInputNumberChannels,
+                            &size,
+                            &nChannels);
+    NSLog(@"Input nChannels:%u", (unsigned int)nChannels);
+    AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareOutputNumberChannels,
+                            &size,
+                            &nChannels);
+    NSLog(@"Output nChannels:%u", (unsigned int)nChannels);
 
     self.isRecording = NO;
     [self prepareAUGraph];
@@ -67,9 +79,9 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     DBGMSG(@"%s", __func__);
     
     if (self.isRecording)   [self stop:nil];
-    AUGraphUninitialize(self.auGraph);
-    AUGraphClose(self.auGraph);
-    DisposeAUGraph(self.auGraph);
+    AUGraphUninitialize(self.recAUGraph);
+    AUGraphClose(self.recAUGraph);
+    DisposeAUGraph(self.recAUGraph);
     
     [super viewDidUnload];
     // Release any retained subviews of the main view.
@@ -87,8 +99,8 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     DBGMSG(@"%s", __func__);
     if (self.isRecording)   return;
     
-    AUGraphStart(self.auGraph);
-    AUGraphAddRenderNotify(self.auGraph, MyAURenderCallack, NULL);
+    AUGraphStart(self.recAUGraph);
+    AUGraphAddRenderNotify(self.recAUGraph, MyAURenderCallack, NULL);
     self.isRecording = YES;
 }
 
@@ -102,8 +114,8 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     DBGMSG(@"%s", __func__);
     if (! self.isRecording)   return;
 
-    AUGraphRemoveRenderNotify(self.auGraph, MyAURenderCallack, NULL);
-    AUGraphStop(self.auGraph);
+    AUGraphRemoveRenderNotify(self.recAUGraph, MyAURenderCallack, NULL);
+    AUGraphStop(self.recAUGraph);
     self.isRecording = NO;
 }
 
@@ -113,8 +125,8 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     AUNode      remoteIONode;
     AudioUnit   remoteIOUnit;
     
-    NewAUGraph(&__auGraph);
-    AUGraphOpen(self.auGraph);
+    NewAUGraph(&__recAUGraph);
+    AUGraphOpen(self.recAUGraph);
     
     AudioComponentDescription   cd;
     cd.componentType            = kAudioUnitType_Output;
@@ -123,8 +135,8 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     cd.componentFlags           = 0;
     cd.componentFlagsMask       = 0;
     
-    AUGraphAddNode(self.auGraph, &cd, &remoteIONode);
-    AUGraphNodeInfo(self.auGraph, remoteIONode, NULL, &remoteIOUnit);
+    AUGraphAddNode(self.recAUGraph, &cd, &remoteIONode);
+    AUGraphNodeInfo(self.recAUGraph, remoteIONode, NULL, &remoteIOUnit);
     
     UInt32  flag = 1;
     AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, 1, &flag, sizeof(flag));
@@ -133,8 +145,8 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &audioFormat, sizeof(AudioStreamBasicDescription));
     AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &audioFormat, sizeof(AudioStreamBasicDescription));
     
-    //AUGraphConnectNodeInput(self.auGraph, remoteIONode, 1, remoteIONode, 0);
-    AUGraphInitialize(self.auGraph);
+    //AUGraphConnectNodeInput(self.recAUGraph, remoteIONode, 1, remoteIONode, 0);
+    AUGraphInitialize(self.recAUGraph);
 }
 
 - (AudioStreamBasicDescription)auCanonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel

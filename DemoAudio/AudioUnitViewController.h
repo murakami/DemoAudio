@@ -12,7 +12,7 @@
 
 @interface AudioUnitViewController : UIViewController
 
-@property (nonatomic, assign) AUGraph                       auGraph;
+@property (nonatomic, assign) AUGraph                       recAUGraph;
 @property (nonatomic, assign) BOOL                          isRecording;
 @property (nonatomic, assign) AudioStreamBasicDescription   audioUnitOutputFormat;
 
