@@ -15,9 +15,11 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
                                   UInt32 inNumberFrames, AudioBufferList *ioData);
 
 @interface AudioUnitViewController ()
+- (void)prepareBuffer;
 - (void)prepareAUGraph;
 - (AudioStreamBasicDescription)auCanonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel;
 - (AudioStreamBasicDescription)canonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel;
+- (void)write:(UInt32)inNumberFrames data:(AudioBufferList *)ioData;
 @end
 
 @implementation AudioUnitViewController
@@ -25,6 +27,9 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
 @synthesize recAUGraph = __recAUGraph;
 @synthesize isRecording = __isRecording;
 @synthesize audioUnitOutputFormat = __audioUnitOutputFormat;
+@synthesize buffer = __buffer;
+@synthesize startingSampleCount = __startingSampleCount;
+@synthesize maxSampleCount = __maxSampleCount;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -58,6 +63,7 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
+    /*
     AudioSessionInitialize(NULL, NULL, NULL, NULL);
     UInt32 nChannels = 0;
     UInt32 size = sizeof(nChannels);
@@ -69,6 +75,9 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
                             &size,
                             &nChannels);
     NSLog(@"Output nChannels:%u", (unsigned int)nChannels);
+    */
+
+    [self prepareBuffer];
 
     self.isRecording = NO;
     [self prepareAUGraph];
@@ -82,6 +91,9 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     AUGraphUninitialize(self.recAUGraph);
     AUGraphClose(self.recAUGraph);
     DisposeAUGraph(self.recAUGraph);
+    
+    free(self.buffer);
+    self.buffer = NULL;
     
     [super viewDidUnload];
     // Release any retained subviews of the main view.
@@ -100,7 +112,7 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     if (self.isRecording)   return;
     
     AUGraphStart(self.recAUGraph);
-    AUGraphAddRenderNotify(self.recAUGraph, MyAURenderCallack, NULL);
+    AUGraphAddRenderNotify(self.recAUGraph, MyAURenderCallack, self);
     self.isRecording = YES;
 }
 
@@ -114,9 +126,20 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     DBGMSG(@"%s", __func__);
     if (! self.isRecording)   return;
 
-    AUGraphRemoveRenderNotify(self.recAUGraph, MyAURenderCallack, NULL);
+    AUGraphRemoveRenderNotify(self.recAUGraph, MyAURenderCallack, self);
     AUGraphStop(self.recAUGraph);
     self.isRecording = NO;
+}
+
+- (void)prepareBuffer
+{
+    DBGMSG(@"%s", __func__);
+    
+    uint32_t    bytesPerSample = sizeof(AudioUnitSampleType);
+    uint32_t    sec = 4;
+    self.startingSampleCount = 0;
+    self.maxSampleCount = (44100 * sec);
+    self.buffer = malloc(self.maxSampleCount * bytesPerSample);
 }
 
 - (void)prepareAUGraph
@@ -157,6 +180,24 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
 - (AudioStreamBasicDescription)canonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel
 {
     return CanonicalASBD(sampleRate, channel);
+}
+
+- (void)write:(UInt32)inNumberFrames data:(AudioBufferList *)ioData
+{
+#if TARGET_IPHONE_SIMULATOR
+#else   /* TARGET_IPHONE_SIMULATOR */
+#endif  /* TARGET_IPHONE_SIMULATOR */
+    DBGMSG(@"%s, inNumberFrames(%u), startingSampleCount(%u)", __func__, (unsigned int)inNumberFrames, (unsigned int)self.startingSampleCount);
+    uint32_t    available = self.maxSampleCount - self.startingSampleCount;
+    if (available < inNumberFrames) {
+        inNumberFrames = available;
+    }
+    memcpy(self.buffer + self.startingSampleCount, ioData->mBuffers[0].mData, sizeof(AudioUnitSampleType) * inNumberFrames);
+    self.startingSampleCount = self.startingSampleCount + inNumberFrames;
+    if (self.maxSampleCount <= self.startingSampleCount) {
+        DBGMSG(@"... stop rec");
+        [self stop:nil];
+    }
 }
 
 @end
@@ -200,12 +241,14 @@ static OSStatus MyAURenderCallack(void *inRefCon,
 {
     DBGMSG(@"%s, inNumberFrames:%u", __func__, (unsigned int)inNumberFrames);
     DBGMSG(@"ioData: mNumberBuffers(%u)", (unsigned int)ioData->mNumberBuffers);
+    AudioUnitViewController *viewController = (AudioUnitViewController *)inRefCon;
     for (unsigned int i = 0; i < ioData->mNumberBuffers; i++) {
         DBGMSG(@"ioData->mBuffers[%u]: mNumberChannels(%u), mDataByteSize(%u)",
                i,
                (unsigned int)ioData->mBuffers[i].mNumberChannels,
                (unsigned int)ioData->mBuffers[i].mDataByteSize);
     }
+    [viewController write:inNumberFrames data:ioData];
     return noErr;
 }
 

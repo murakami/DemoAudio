@@ -15,6 +15,9 @@
 @property (nonatomic, assign) AUGraph                       recAUGraph;
 @property (nonatomic, assign) BOOL                          isRecording;
 @property (nonatomic, assign) AudioStreamBasicDescription   audioUnitOutputFormat;
+@property (nonatomic, assign) AudioUnitSampleType           *buffer;
+@property (nonatomic, assign) uint32_t                      startingSampleCount;
+@property (nonatomic, assign) uint32_t                      maxSampleCount;
 
 - (IBAction)record:(id)sender;
 - (IBAction)play:(id)sender;
