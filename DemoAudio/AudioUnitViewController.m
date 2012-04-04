@@ -13,19 +13,32 @@ static AudioStreamBasicDescription CanonicalASBD(Float64 sampleRate, UInt32 chan
 static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags,
                                   const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber,
                                   UInt32 inNumberFrames, AudioBufferList *ioData);
+static OSStatus MyPlayAURenderCallack (
+                                   void                        *inRefCon,
+                                   AudioUnitRenderActionFlags  *ioActionFlags,
+                                   const AudioTimeStamp        *inTimeStamp,
+                                   UInt32                      inBusNumber,
+                                   UInt32                      inNumberFrames,
+                                   AudioBufferList             *ioData
+                                   );
+
 
 @interface AudioUnitViewController ()
 - (void)prepareBuffer;
 - (void)prepareAUGraph;
+- (void)prepareAudioUnit;
 - (AudioStreamBasicDescription)auCanonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel;
 - (AudioStreamBasicDescription)canonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel;
 - (void)write:(UInt32)inNumberFrames data:(AudioBufferList *)ioData;
+- (void)read:(UInt32)inNumberFrames data:(AudioBufferList *)ioData;
 @end
 
 @implementation AudioUnitViewController
 
-@synthesize recAUGraph = __recAUGraph;
+@synthesize auGraph = __auGraph;
 @synthesize isRecording = __isRecording;
+@synthesize audioUnit = __audioUnit;
+@synthesize isPlaying = __isPlaying;
 @synthesize audioUnitOutputFormat = __audioUnitOutputFormat;
 @synthesize buffer = __buffer;
 @synthesize startingSampleCount = __startingSampleCount;
@@ -80,7 +93,9 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     [self prepareBuffer];
 
     self.isRecording = NO;
+    self.isPlaying = NO;
     [self prepareAUGraph];
+    [self prepareAudioUnit];
 }
 
 - (void)viewDidUnload
@@ -88,9 +103,9 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     DBGMSG(@"%s", __func__);
     
     if (self.isRecording)   [self stop:nil];
-    AUGraphUninitialize(self.recAUGraph);
-    AUGraphClose(self.recAUGraph);
-    DisposeAUGraph(self.recAUGraph);
+    AUGraphUninitialize(self.auGraph);
+    AUGraphClose(self.auGraph);
+    DisposeAUGraph(self.auGraph);
     
     free(self.buffer);
     self.buffer = NULL;
@@ -111,24 +126,34 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     DBGMSG(@"%s", __func__);
     if (self.isRecording)   return;
     
-    AUGraphStart(self.recAUGraph);
-    AUGraphAddRenderNotify(self.recAUGraph, MyAURenderCallack, self);
+    AUGraphStart(self.auGraph);
+    AUGraphAddRenderNotify(self.auGraph, MyAURenderCallack, self);
     self.isRecording = YES;
+    self.startingSampleCount = 0;
 }
 
 - (IBAction)play:(id)sender
 {
     DBGMSG(@"%s", __func__);
+    if (self.isPlaying) return;
+    
+    AudioOutputUnitStart(self.audioUnit);
+    self.isPlaying = YES;
+    self.startingSampleCount = 0;
 }
 
 - (IBAction)stop:(id)sender
 {
-    DBGMSG(@"%s", __func__);
-    if (! self.isRecording)   return;
-
-    AUGraphRemoveRenderNotify(self.recAUGraph, MyAURenderCallack, self);
-    AUGraphStop(self.recAUGraph);
+    DBGMSG(@"%s", __func__);    
+    if (self.isRecording) {
+        AUGraphRemoveRenderNotify(self.auGraph, MyAURenderCallack, self);
+        AUGraphStop(self.auGraph);
+    }
+    if (self.isPlaying) {
+        AudioOutputUnitStop(self.audioUnit);
+    }
     self.isRecording = NO;
+    self.isPlaying = NO;
 }
 
 - (void)prepareBuffer
@@ -148,8 +173,8 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     AUNode      remoteIONode;
     AudioUnit   remoteIOUnit;
     
-    NewAUGraph(&__recAUGraph);
-    AUGraphOpen(self.recAUGraph);
+    NewAUGraph(&__auGraph);
+    AUGraphOpen(self.auGraph);
     
     AudioComponentDescription   cd;
     cd.componentType            = kAudioUnitType_Output;
@@ -158,8 +183,8 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     cd.componentFlags           = 0;
     cd.componentFlagsMask       = 0;
     
-    AUGraphAddNode(self.recAUGraph, &cd, &remoteIONode);
-    AUGraphNodeInfo(self.recAUGraph, remoteIONode, NULL, &remoteIOUnit);
+    AUGraphAddNode(self.auGraph, &cd, &remoteIONode);
+    AUGraphNodeInfo(self.auGraph, remoteIONode, NULL, &remoteIOUnit);
     
     UInt32  flag = 1;
     AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, 1, &flag, sizeof(flag));
@@ -168,8 +193,31 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &audioFormat, sizeof(AudioStreamBasicDescription));
     AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &audioFormat, sizeof(AudioStreamBasicDescription));
     
-    //AUGraphConnectNodeInput(self.recAUGraph, remoteIONode, 1, remoteIONode, 0);
-    AUGraphInitialize(self.recAUGraph);
+    //AUGraphConnectNodeInput(self.auGraph, remoteIONode, 1, remoteIONode, 0);
+    AUGraphInitialize(self.auGraph);
+}
+
+- (void)prepareAudioUnit
+{
+    DBGMSG(@"%s", __func__);
+
+    AudioComponentDescription   cd;
+    cd.componentType            = kAudioUnitType_Output;
+    cd.componentSubType         = kAudioUnitSubType_RemoteIO;
+    cd.componentManufacturer    = kAudioUnitManufacturer_Apple;
+    cd.componentFlags           = 0;
+    cd.componentFlagsMask       = 0;
+
+    AudioComponent  component = AudioComponentFindNext(NULL, &cd);
+    AudioComponentInstanceNew(component, &__audioUnit);
+    AudioUnitInitialize(self.audioUnit);
+    AURenderCallbackStruct  callbackStruct;
+    callbackStruct.inputProc = MyPlayAURenderCallack;
+    callbackStruct.inputProcRefCon = self;
+    AudioUnitSetProperty(self.audioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &callbackStruct, sizeof(AURenderCallbackStruct));
+    
+    AudioStreamBasicDescription audioFormat = [self canonicalASBDSampleRate:44100.0 channel:1];
+    AudioUnitSetProperty(self.audioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &audioFormat, sizeof(AudioStreamBasicDescription));
 }
 
 - (AudioStreamBasicDescription)auCanonicalASBDSampleRate:(Float64)sampleRate channel:(UInt32)channel
@@ -197,6 +245,28 @@ static OSStatus MyAURenderCallack(void *inRefCon, AudioUnitRenderActionFlags *io
     if (self.maxSampleCount <= self.startingSampleCount) {
         DBGMSG(@"... stop rec");
         [self stop:nil];
+    }
+}
+
+- (void)read:(UInt32)inNumberFrames data:(AudioBufferList *)ioData
+{
+#if TARGET_IPHONE_SIMULATOR
+#else   /* TARGET_IPHONE_SIMULATOR */
+#endif  /* TARGET_IPHONE_SIMULATOR */
+    DBGMSG(@"%s, inNumberFrames(%u), startingSampleCount(%u)", __func__, (unsigned int)inNumberFrames, (unsigned int)self.startingSampleCount);
+    uint32_t    available = self.maxSampleCount - self.startingSampleCount;
+    uint32_t    num = inNumberFrames;
+    if (available < num) {
+        num = available;
+    }
+    memcpy(ioData->mBuffers[0].mData, self.buffer + self.startingSampleCount, num);
+    self.startingSampleCount = self.startingSampleCount + num;
+    if (self.maxSampleCount <= self.startingSampleCount)
+        self.startingSampleCount = 0;
+    if (num < inNumberFrames) {
+        num = inNumberFrames - num;
+        memcpy(ioData->mBuffers[0].mData, self.buffer + self.startingSampleCount, num);
+        self.startingSampleCount = self.startingSampleCount + num;
     }
 }
 
@@ -239,7 +309,7 @@ static OSStatus MyAURenderCallack(void *inRefCon,
                                   UInt32 inNumberFrames,
                                   AudioBufferList *ioData)
 {
-    DBGMSG(@"%s, inNumberFrames:%u", __func__, (unsigned int)inNumberFrames);
+    DBGMSG(@"%s, inBusNumber:%u, inNumberFrames:%u", __func__, (unsigned int)inBusNumber, (unsigned int)inNumberFrames);
     DBGMSG(@"ioData: mNumberBuffers(%u)", (unsigned int)ioData->mNumberBuffers);
     AudioUnitViewController *viewController = (AudioUnitViewController *)inRefCon;
     for (unsigned int i = 0; i < ioData->mNumberBuffers; i++) {
@@ -249,6 +319,28 @@ static OSStatus MyAURenderCallack(void *inRefCon,
                (unsigned int)ioData->mBuffers[i].mDataByteSize);
     }
     [viewController write:inNumberFrames data:ioData];
+    return noErr;
+}
+
+static OSStatus MyPlayAURenderCallack (
+                                       void                        *inRefCon,
+                                       AudioUnitRenderActionFlags  *ioActionFlags,
+                                       const AudioTimeStamp        *inTimeStamp,
+                                       UInt32                      inBusNumber,
+                                       UInt32                      inNumberFrames,
+                                       AudioBufferList             *ioData
+                                       )
+{
+    DBGMSG(@"%s, inBusNumber:%u, inNumberFrames:%u", __func__, (unsigned int)inBusNumber, (unsigned int)inNumberFrames);
+    DBGMSG(@"ioData: mNumberBuffers(%u)", (unsigned int)ioData->mNumberBuffers);
+    AudioUnitViewController *viewController = (AudioUnitViewController *)inRefCon;
+    for (unsigned int i = 0; i < ioData->mNumberBuffers; i++) {
+        DBGMSG(@"ioData->mBuffers[%u]: mNumberChannels(%u), mDataByteSize(%u)",
+               i,
+               (unsigned int)ioData->mBuffers[i].mNumberChannels,
+               (unsigned int)ioData->mBuffers[i].mDataByteSize);
+    }
+    [viewController read:inNumberFrames data:ioData];
     return noErr;
 }
 
