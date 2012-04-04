@@ -15,6 +15,8 @@
 @property (nonatomic, assign) AUGraph                       auGraph;
 @property (nonatomic, assign) BOOL                          isRecording;
 @property (nonatomic, assign) AudioUnit                     audioUnit;
+@property (nonatomic, assign) double                        phase;
+@property (nonatomic, assign) Float64                       sampleRate;
 @property (nonatomic, assign) BOOL                          isPlaying;
 @property (nonatomic, assign) AudioStreamBasicDescription   audioUnitOutputFormat;
 @property (nonatomic, assign) AudioUnitSampleType           *buffer;

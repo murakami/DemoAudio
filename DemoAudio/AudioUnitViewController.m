@@ -38,6 +38,8 @@ static OSStatus MyPlayAURenderCallack (
 @synthesize auGraph = __auGraph;
 @synthesize isRecording = __isRecording;
 @synthesize audioUnit = __audioUnit;
+@synthesize phase = __phase;
+@synthesize sampleRate = __sampleRate;
 @synthesize isPlaying = __isPlaying;
 @synthesize audioUnitOutputFormat = __audioUnitOutputFormat;
 @synthesize buffer = __buffer;
@@ -106,6 +108,10 @@ static OSStatus MyPlayAURenderCallack (
     AUGraphUninitialize(self.auGraph);
     AUGraphClose(self.auGraph);
     DisposeAUGraph(self.auGraph);
+    
+    if (self.isPlaying) [self stop:nil];
+    AudioUnitUninitialize(self.audioUnit);
+    AudioComponentInstanceDispose(self.audioUnit);
     
     free(self.buffer);
     self.buffer = NULL;
@@ -215,8 +221,12 @@ static OSStatus MyPlayAURenderCallack (
     callbackStruct.inputProc = MyPlayAURenderCallack;
     callbackStruct.inputProcRefCon = self;
     AudioUnitSetProperty(self.audioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &callbackStruct, sizeof(AURenderCallbackStruct));
+
+    self.phase = 0.0;
+    self.sampleRate = 44100.0;
     
-    AudioStreamBasicDescription audioFormat = [self canonicalASBDSampleRate:44100.0 channel:1];
+    AudioStreamBasicDescription audioFormat = [self auCanonicalASBDSampleRate:self.sampleRate channel:2];
+    
     AudioUnitSetProperty(self.audioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &audioFormat, sizeof(AudioStreamBasicDescription));
 }
 
@@ -340,7 +350,22 @@ static OSStatus MyPlayAURenderCallack (
                (unsigned int)ioData->mBuffers[i].mNumberChannels,
                (unsigned int)ioData->mBuffers[i].mDataByteSize);
     }
+    /*
     [viewController read:inNumberFrames data:ioData];
+    */
+    
+    float   freq = 440 * 2.0 * M_PI / viewController.sampleRate;
+    double  phase = viewController.phase;
+    AudioUnitSampleType *outL = ioData->mBuffers[0].mData;
+    AudioUnitSampleType *outR = ioData->mBuffers[1].mData;
+    for (int i = 0; i < inNumberFrames; i++) {
+        float   wave = sin(phase);
+        AudioUnitSampleType sample = wave * (1 << kAudioUnitSampleFractionBits);
+        *outL++ = sample;
+        *outR++ = sample;
+        phase = phase + freq;
+    }
+    viewController.phase = phase;
     return noErr;
 }
 
