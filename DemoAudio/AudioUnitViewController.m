@@ -195,11 +195,11 @@ static OSStatus MyPlayAURenderCallack (
     UInt32  flag = 1;
     AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, 1, &flag, sizeof(flag));
     
-    AudioStreamBasicDescription audioFormat = [self canonicalASBDSampleRate:44100.0 channel:1];
+    AudioStreamBasicDescription audioFormat = [self auCanonicalASBDSampleRate:44100.0 channel:1];
     AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &audioFormat, sizeof(AudioStreamBasicDescription));
     AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &audioFormat, sizeof(AudioStreamBasicDescription));
     
-    //AUGraphConnectNodeInput(self.auGraph, remoteIONode, 1, remoteIONode, 0);
+    AUGraphConnectNodeInput(self.auGraph, remoteIONode, 1, remoteIONode, 0);
     AUGraphInitialize(self.auGraph);
 }
 
@@ -245,7 +245,9 @@ static OSStatus MyPlayAURenderCallack (
 #if TARGET_IPHONE_SIMULATOR
 #else   /* TARGET_IPHONE_SIMULATOR */
 #endif  /* TARGET_IPHONE_SIMULATOR */
+    /*
     DBGMSG(@"%s, inNumberFrames(%u), startingSampleCount(%u)", __func__, (unsigned int)inNumberFrames, (unsigned int)self.startingSampleCount);
+    */
     uint32_t    available = self.maxSampleCount - self.startingSampleCount;
     if (available < inNumberFrames) {
         inNumberFrames = available;
@@ -263,21 +265,24 @@ static OSStatus MyPlayAURenderCallack (
 #if TARGET_IPHONE_SIMULATOR
 #else   /* TARGET_IPHONE_SIMULATOR */
 #endif  /* TARGET_IPHONE_SIMULATOR */
+    /*
     DBGMSG(@"%s, inNumberFrames(%u), startingSampleCount(%u)", __func__, (unsigned int)inNumberFrames, (unsigned int)self.startingSampleCount);
+    */
     uint32_t    available = self.maxSampleCount - self.startingSampleCount;
     uint32_t    num = inNumberFrames;
     if (available < num) {
         num = available;
     }
-    memcpy(ioData->mBuffers[0].mData, self.buffer + self.startingSampleCount, num);
+    memcpy(ioData->mBuffers[0].mData, self.buffer + self.startingSampleCount, sizeof(AudioUnitSampleType) * num);
     self.startingSampleCount = self.startingSampleCount + num;
     if (self.maxSampleCount <= self.startingSampleCount)
         self.startingSampleCount = 0;
     if (num < inNumberFrames) {
         num = inNumberFrames - num;
-        memcpy(ioData->mBuffers[0].mData, self.buffer + self.startingSampleCount, num);
+        memcpy(ioData->mBuffers[0].mData, self.buffer + self.startingSampleCount, sizeof(AudioUnitSampleType) * num);
         self.startingSampleCount = self.startingSampleCount + num;
     }
+    memcpy(ioData->mBuffers[1].mData, ioData->mBuffers[0].mData, sizeof(AudioUnitSampleType) * inNumberFrames);
 }
 
 @end
@@ -319,15 +324,19 @@ static OSStatus MyAURenderCallack(void *inRefCon,
                                   UInt32 inNumberFrames,
                                   AudioBufferList *ioData)
 {
+    /*
     DBGMSG(@"%s, inBusNumber:%u, inNumberFrames:%u", __func__, (unsigned int)inBusNumber, (unsigned int)inNumberFrames);
     DBGMSG(@"ioData: mNumberBuffers(%u)", (unsigned int)ioData->mNumberBuffers);
+    */
     AudioUnitViewController *viewController = (AudioUnitViewController *)inRefCon;
+    /*
     for (unsigned int i = 0; i < ioData->mNumberBuffers; i++) {
         DBGMSG(@"ioData->mBuffers[%u]: mNumberChannels(%u), mDataByteSize(%u)",
                i,
                (unsigned int)ioData->mBuffers[i].mNumberChannels,
                (unsigned int)ioData->mBuffers[i].mDataByteSize);
     }
+    */
     [viewController write:inNumberFrames data:ioData];
     return noErr;
 }
@@ -341,19 +350,22 @@ static OSStatus MyPlayAURenderCallack (
                                        AudioBufferList             *ioData
                                        )
 {
+    /*
     DBGMSG(@"%s, inBusNumber:%u, inNumberFrames:%u", __func__, (unsigned int)inBusNumber, (unsigned int)inNumberFrames);
     DBGMSG(@"ioData: mNumberBuffers(%u)", (unsigned int)ioData->mNumberBuffers);
+    */
     AudioUnitViewController *viewController = (AudioUnitViewController *)inRefCon;
+    /*
     for (unsigned int i = 0; i < ioData->mNumberBuffers; i++) {
         DBGMSG(@"ioData->mBuffers[%u]: mNumberChannels(%u), mDataByteSize(%u)",
                i,
                (unsigned int)ioData->mBuffers[i].mNumberChannels,
                (unsigned int)ioData->mBuffers[i].mDataByteSize);
     }
-    /*
-    [viewController read:inNumberFrames data:ioData];
     */
+    [viewController read:inNumberFrames data:ioData];
     
+    /*
     float   freq = 440 * 2.0 * M_PI / viewController.sampleRate;
     double  phase = viewController.phase;
     AudioUnitSampleType *outL = ioData->mBuffers[0].mData;
@@ -366,6 +378,7 @@ static OSStatus MyPlayAURenderCallack (
         phase = phase + freq;
     }
     viewController.phase = phase;
+    */
     return noErr;
 }
 
